@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A modern weather app with vibrant visuals"
+    />
+    <title>Taiye Gabriel Ade Benson Vivid Weather</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="weather.html">Weather</a>
+        <a href="about.html">About</a>
+      </nav>
+    </header>
 
+    <main class="home">
+      <section class="intro">
+        <h1>🌞 Welcome to Vivid Weather</h1>
+        <p>Your colorful weather experience starts here.</p>
+        <form id="searchForm" aria-label="Search form">
+          <input
+            type="text"
+            id="cityInput"
+            placeholder="Enter a city..."
+            required
+            aria-label="City name"
+          />
+          <button type="submit">Get Weather</button>
+        </form>
+      </section>
+
+      <div class="loader hidden" id="loader" aria-hidden="true"></div>
+    </main>
+
+    <footer>
+      <p>Designed by Taiye Gabriel Ade-Benson</p>
+    </footer>
+
+    <script type="module" src="./js/home.js"></script>
+  </body>
+</html>
