@@ -1,22 +1,40 @@
-
 /* Global styles */
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #333;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #34d399, #60a5fa);
-  color: #333;
-  text-align: center;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-header {
-  background: #fff;
+/* Header and Footer */
+header,
+footer {
+  background: #f7f7f7;
   padding: 1em 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header a {
+  margin: 0 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+header button {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
 }
 
 nav a {
-  color: #4b5563;
+  color: #333;
   text-decoration: none;
   margin: 0 1em;
   font-weight: bold;
@@ -28,10 +46,64 @@ nav a:hover {
   color: #ff6ec4;
 }
 
+main {
+  padding: 1em;
+  text-align: center;
+}
+
+/* Form elements */
+input,
+button {
+  padding: 0.8em 1.2em;
+  font-size: 1.1em;
+  border-radius: 8px;
+  margin: 0 0.5em;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+input {
+  border: 2px solid #ddd;
+}
+
+button {
+  background-color: #ff6ec4;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Loader */
+.loader {
+  margin-top: 1em;
+  width: 30px;
+  height: 30px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff6ec4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* Home page */
 .home {
   padding: 2em;
-  color: #fff;
+  color: #333;
+  background-color: #f0f0f0;
 }
 
 .intro h1 {
@@ -45,38 +117,11 @@ form {
   margin-top: 1.5em;
 }
 
-input,
-button {
-  padding: 0.8em 1.2em;
-  font-size: 1.1em;
-  border-radius: 8px;
-  margin: 0 0.5em;
-}
-
-input {
-  border: 2px solid #fff;
-}
-
-button {
-  background-color: #ff6ec4;
-  color: white;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.3s ease;
-}
-
-button:hover {
-  transform: scale(1.05);
-}
-
-.loader {
-  margin-top: 1em;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #ff6ec4;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+#searchForm input,
+#searchForm button {
+  margin: 1em 0;
+  padding: 0.5em;
+  font-size: 1em;
 }
 
 /* Weather page */
@@ -112,7 +157,6 @@ button:hover {
   text-decoration: none;
   color: white;
   border-radius: 8px;
-  transition: transform 0.3s ease;
 }
 
 .back-btn:hover {
@@ -147,19 +191,137 @@ button:hover {
   margin-bottom: 0.5em;
 }
 
-footer {
-  padding: 1em;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* Forecast section */
+#forecastInfo {
+  margin-top: 2em;
+}
+
+#forecastInfo.hidden,
+.forecast.hidden,
+.hidden {
+  display: none;
+}
+
+#forecastInfo ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#forecastInfo li {
+  margin: 5px 0;
+}
+
+/* Forecast card layout */
+.forecast-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.forecast-card {
+  max-width: 150px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-/* Loading spinner animation */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+.forecast-card p {
+  margin: 5px 0;
+}
+
+/* Dark Mode */
+body.dark {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark header,
+body.dark nav,
+body.dark footer,
+.home.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+body.dark input,
+body.dark button {
+  background-color: #333;
+  color: white;
+}
+
+body.dark button:hover {
+  background-color: #666;
+}
+
+body.dark a {
+  color: #80cbc4;
+}
+
+body.dark .forecast-card {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.forecast-card {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  100% {
-    transform: rotate(360deg);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .forecast-info {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .home {
+    padding: 1em;
+  }
+
+  .intro h1 {
+    font-size: 2em;
+  }
+
+  .forecast-card {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .forecast-info {
+    grid-template-columns: 1fr;
+  }
+
+  .forecast-card {
+    max-width: 100%;
+  }
+}
+
+/* Button style for dark mode toggle */
+button.dark-mode-toggle {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+
+/* Style for error messages */
+.error-message {
+  color: red;
+  font-weight: bold;
+  display: none;
+  }
