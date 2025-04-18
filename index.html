@@ -16,6 +16,13 @@
         <a href="index.html">Home</a>
         <a href="weather.html">Weather</a>
         <a href="about.html">About</a>
+        <button
+          id="darkModeToggle"
+          aria-label="Toggle dark mode"
+          title="Toggle Dark Mode"
+        >
+          🌙
+        </button>
       </nav>
     </header>
 
@@ -23,6 +30,7 @@
       <section class="intro">
         <h1>🌞 Welcome to Vivid Weather</h1>
         <p>Your colorful weather experience starts here.</p>
+
         <form id="searchForm" aria-label="Search form">
           <input
             type="text"
@@ -33,9 +41,36 @@
           />
           <button type="submit">Get Weather</button>
         </form>
+
+        <!-- Show Forecast Button -->
+        <button
+          id="showForecastBtn"
+          aria-label="View forecast"
+          title="Show Forecast"
+        >
+          ⛅ Show Forecast
+        </button>
       </section>
 
-      <div class="loader hidden" id="loader" aria-hidden="true"></div>
+      <!-- Weather Info and Forecast Section -->
+      <section class="weather-info">
+        <div id="weatherInfo" role="region" aria-live="polite"></div>
+        <div id="forecastInfo" class="forecast hidden" aria-live="polite"></div>
+      </section>
+
+      <!-- Loader -->
+      <div class="loader hidden" id="loader" aria-hidden="true">Loading...</div>
+
+      <!-- Add the new elements for weather display, background, and error message -->
+      <div id="weatherDisplay" aria-live="polite"></div>
+      <div id="background" aria-hidden="true"></div>
+      <div id="errorMessage" class="hidden" aria-live="assertive"></div>
+
+      <!-- Search History Section -->
+      <section id="searchHistorySection">
+        <h2>Search History</h2>
+        <ul id="searchHistory" aria-live="polite"></ul>
+      </section>
     </main>
 
     <footer>
