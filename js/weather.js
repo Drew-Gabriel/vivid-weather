@@ -1,79 +1,138 @@
-const city = localStorage.getItem("lastCity");
-const infoDiv = document.getElementById("weatherInfo");
-const bgDiv = document.getElementById("background");
+// Fetch weather data from Open-Meteo API
+async function fetchWeatherData(city) {
+  const response = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&hourly=temperature_2m,humidity_2m,precipitation,wind_speed_10m,weathercode`
+  );
+  const data = await response.json();
 
-async function getCoordinates(city) {
-  const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-    city
-  )}`;
-  const geoRes = await fetch(geoUrl);
-  if (!geoRes.ok) throw new Error("Error fetching location data");
-  const geoData = await geoRes.json();
-  if (!geoData.results) throw new Error("City not found");
-  const { latitude, longitude } = geoData.results[0];
-  return { latitude, longitude };
+  // Store data in JSON format in localStorage
+  localStorage.setItem("weatherData", JSON.stringify(data));
+  return data;
 }
 
-async function getWeather(latitude, longitude) {
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
-  const weatherRes = await fetch(weatherUrl);
-  if (!weatherRes.ok) throw new Error("Error fetching weather data");
-  return await weatherRes.json();
-}
-
-async function setBackground(city) {
-  const unsplashKey = "YOUR_UNSPLASH_KEY";
-  try {
-    const imgRes = await fetch(
-      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
-        city
-      )}+weather&client_id=${unsplashKey}`
-    );
-    if (!imgRes.ok) throw new Error("Error fetching background image");
-    const imgData = await imgRes.json();
-    bgDiv.style.backgroundImage = `url(${imgData[0].urls.full})`;
-  } catch (err) {
-    console.warn("Failed to load Unsplash image", err);
+// Save and retrieve city preference from localStorage
+function saveCityPreference(city) {
+  let cityHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
+  if (!cityHistory.includes(city)) {
+    cityHistory.push(city);
   }
+  localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
 }
 
-function displayWeather(data, city) {
-  const { temperature, windspeed, weathercode } = data.current_weather;
-  const weatherDescription = getWeatherDescription(weathercode);
-  const html = `
-    <h2>${city}</h2>
-    <p><strong>${weatherDescription}</strong></p>
-    <p>🌡 Temp: ${temperature}°C</p>
-    <p>💨 Wind: ${windspeed} m/s</p>
-  `;
-  infoDiv.innerHTML = html;
+// Toggle dark mode
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
 }
 
-function getWeatherDescription(code) {
-  const weatherCodes = {
-    0: "Clear sky",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    // Add more weather descriptions...
-  };
-  return weatherCodes[code] || "Unknown weather";
+// Dynamically create HTML for weather data
+function createWeatherHTML(data) {
+  const weatherContainer = document.querySelector(".weatherInfo");
+
+  // Clear previous data
+  weatherContainer.innerHTML = "";
+
+  // Hourly Forecast Cards
+  const hourlyData = data.hourly;
+  hourlyData.temperature_2m.forEach((temp, index) => {
+    const forecastCard = document.createElement("div");
+    forecastCard.classList.add("forecast-card");
+
+    // Create dynamic content for each forecast
+    forecastCard.innerHTML = `
+      <h3>Hour: ${index + 1}</h3>
+      <p>Temperature: ${temp}°C</p>
+      <p>Humidity: ${data.hourly.humidity_2m[index]}%</p>
+      <p>Wind Speed: ${data.hourly.wind_speed_10m[index]} km/h</p>
+      <p>Precipitation: ${data.hourly.precipitation[index]} mm</p>
+    `;
+
+    weatherContainer.appendChild(forecastCard);
+  });
 }
 
-async function loadWeather() {
-  if (!city) {
-    infoDiv.innerHTML =
-      "<p>No city found. Please go back and search again.</p>";
-    return;
+// Event for submitting search form
+document.getElementById("searchForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const city = document.getElementById("cityInput").value;
+  saveCityPreference(city);
+  fetchWeatherData(city).then((data) => {
+    createWeatherHTML(data);
+  });
+});
+
+// Event for dark mode toggle
+document
+  .getElementById("darkModeToggle")
+  .addEventListener("click", function () {
+    toggleDarkMode();
+  });
+
+// Display city search history
+function displaySearchHistory() {
+  const historyContainer = document.querySelector("#searchHistory");
+  const cityHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
+
+  cityHistory.forEach((city) => {
+    const cityItem = document.createElement("li");
+    cityItem.textContent = city;
+    historyContainer.appendChild(cityItem);
+  });
+}
+
+// Event for handling weather data fetch errors
+function handleError(error) {
+  alert("Error fetching weather data: " + error.message);
+}
+
+// Initially fetch weather data or use localStorage data
+function initializeApp() {
+  const city = localStorage.getItem("lastCity") || "London"; // Default city
+  fetchWeatherData(city)
+    .then((data) => createWeatherHTML(data))
+    .catch((error) => handleError(error));
+  displaySearchHistory();
+}
+
+initializeApp();
+// Toggle between Celsius and Fahrenheit
+document.getElementById("unit-toggle").addEventListener("click", toggleUnits);
+
+function toggleUnits() {
+  const unit =
+    localStorage.getItem("unit") === "metric" ? "imperial" : "metric";
+  localStorage.setItem("unit", unit);
+  // Re-fetch weather data with the new unit
+  fetchWeatherData(cityName, unit);
+}
+
+// Hover effect for forecast cards
+const forecastCards = document.querySelectorAll(".forecast-card");
+forecastCards.forEach((card) => {
+  card.addEventListener("mouseover", () => {
+    card.classList.add("hover");
+  });
+  card.addEventListener("mouseout", () => {
+    card.classList.remove("hover");
+  });
+});
+
+// Show and hide error messages
+function showError(message) {
+  const errorElement = document.querySelector(".error-message");
+  errorElement.textContent = message;
+  errorElement.style.display = "block";
+}
+
+function hideError() {
+  const errorElement = document.querySelector(".error-message");
+  errorElement.style.display = "none";
+}
+
+// Search history interaction
+const searchHistory = document.querySelector(".search-history");
+searchHistory.addEventListener("click", (event) => {
+  if (event.target.tagName === "LI") {
+    const city = event.target.textContent;
+    fetchWeatherData(city);
   }
-  try {
-    const { latitude, longitude } = await getCoordinates(city);
-    const weatherData = await getWeather(latitude, longitude);
-    displayWeather(weatherData, city);
-    setBackground(city);
-  } catch (err) {
-    infoDiv.innerHTML = `<p>Error: ${err.message}</p>`;
-  }
-}
-
-loadWeather();
+});
